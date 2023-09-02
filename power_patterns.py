@@ -1,24 +1,24 @@
-# Copyright (c) [2023] [vccjlc]
-# Raise consecutive natural numbers to any power and observe the differences between results.
-# What happens when you take the differences between differences, and so on?
+# Raise consecutive natural numbers to any power and observe differences between results.
+# What happens when you take differences between differences, and so on?
 import math
 
+# Take the exponent from the user.
 while True:
     try:
-        # Take the exponent from the user.
+
         power = int(input("\nPlease enter the exponent (between 2 and 16, inclusive): "))
 
         if not 2 <= power <= 16:
             print("Please enter an integer between 2 and 16. Try, try again my friend.")
             continue  # Restart the loop
 
-        break  # Exit the loop if input is valid
+        break
 
     except ValueError:
         print("Invalid input. Please enter an integer.")
 
 
-# Function to find constant differences
+# Function to find powers, differences and display the results stored in a dictionary
 def find_constant_diff(n, power):
     numbers = list(range(1, n + 1))
     powered_numbers = [i ** power for i in numbers]
@@ -50,7 +50,7 @@ def find_constant_diff(n, power):
     print()
 
     for i in range(n):
-        print(f"{data['Number'][i]:>6}", end="")
+        print(f"{data['Number'][i]:>7}", end="")
         for key in list(data.keys())[1:]:
             if i < len(data[key]):
                 print(f"{data[key][i]:>15}", end="")
@@ -62,7 +62,10 @@ def find_constant_diff(n, power):
 # Call the function
 find_constant_diff(20, power)
 
-fact = math.factorial(power)
+
 # Explain the results
+fact = math.factorial(power)
 print(f"\nThe number of differences is equal to the exponent ({power})")
 print(f"The final differences are equal to exponent factorial ({power}! = {fact})")
+
+# Copyright (c) [2023] [vccjlc]
