@@ -1,3 +1,4 @@
+# Copyright (c) [2023] [vccjlc]
 # Raise consecutive natural numbers to any power and observe the differences between results.
 # What happens when you take the differences between differences, and so on?
 import math
