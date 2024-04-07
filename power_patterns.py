@@ -1,71 +1,100 @@
-# Raise consecutive natural numbers to any power and observe differences between results.
-# What happens when you take differences between differences, and so on?
+"""
+Raise consecutive natural numbers to chosen power and observe differences between results.
+What happens when you take differences between differences, and so on?
+This code is beginner-level and for demonstration purposes only. Original ranges should be preserved.
+Additional challenge for fun is to keep the line count at exactly 100.
+"""
+
 import math
 
-# Take the exponent from the user.
-while True:
-    try:
+PADDING = 4 # For result display
+MIN_POWER = 2
+MAX_POWER = 16
+SCI_NOT_POWER = 11 # Below this number, results will be displayed in a standard notation
+NUM_LOW = 1
+NUM_HIGH = 21 # Highest number for which the results will be calculated
 
-        power = int(input("\nPlease enter the exponent (between 2 and 16, inclusive): "))
-
-        if not 2 <= power <= 16:
-            print("Please enter an integer between 2 and 16. Try, try again my friend.")
-            continue  # Restart the loop
-
-        break
-
-    except ValueError:
-        print("Invalid input. Please enter an integer.")
-
-
-# Function to find powers, differences and display the results stored in a dictionary
-def find_constant_diff(n, power):
-    numbers = list(range(1, n + 1))
-    powered_numbers = [i ** power for i in numbers]
-    differences = [powered_numbers[i] - powered_numbers[i - 1] for i in range(1, len(powered_numbers))]
-
-    data = {'Number': numbers, 'Power': powered_numbers, 'Difference_1': differences}
-
-    diff_level = 1
-
+def get_power_from_user():
+    # Prompt the user for an exponent between MIN_POWER and MAX_POWER, inclusive
     while True:
-        last_diff_key = f"Difference_{diff_level}"
-        new_diff_key = f"Difference_{diff_level + 1}"
+        try:
+            power = int(input(f"\nEnter an exponent ({MIN_POWER} to {MAX_POWER}, inclusive): "))
+            if MIN_POWER <= power <= MAX_POWER:
+                return power
+            print(f"Out of range. Please enter a number between {MIN_POWER} and {MAX_POWER}.")
+        except ValueError:
+            print("Invalid input. Please enter an integer.")
 
-        last_diffs = data[last_diff_key]
-        new_diffs = [last_diffs[i] - last_diffs[i - 1] for i in range(1, len(last_diffs))]
+def calculate_differences(numbers, power):
+    # Calculate consecutive differences of numbers raised to the given power
+    powered_numbers = [num ** power for num in numbers]
+    differences = {}
+    current_diffs = powered_numbers
 
-        data[new_diff_key] = new_diffs
+    level = 0
+    while len(set(current_diffs)) > 1:
+        current_diffs = [current_diffs[i] - current_diffs[i - 1] for i in range(1, len(current_diffs))]
+        level += 1
+        differences[level] = current_diffs
 
-        if len(set(new_diffs)) == 1:
-            break
+    return powered_numbers, differences
 
-        diff_level += 1
+def format_number(num, level, power):
+    # Dynamically format number based on the original power
+    if power < SCI_NOT_POWER:
+        # For numbers derived from powers less than SCI_NOT_POWER, use standard notation
+        return f"{num:,}"
+    else:
+        # For larger numbers, use scientific notation
+        return f"{num:.2e}"
 
-    # Display the results
-    print("Number", end="")
-    for key in data.keys():
-        if key != "Number":
-            print(f"{key:>15}", end="")
+def calculate_max_widths(numbers, powered_numbers, differences, power):
+    # Calculate maximum width for each column to ensure proper alignment and spacing
+    max_widths = [len(str(max(numbers)))]  # Width of the 'Number' column
+    all_numbers = [powered_numbers] + list(differences.values())
+
+    for level, nums in enumerate(all_numbers, start=1):
+        formatted_numbers = [format_number(num, level, power) for num in nums]
+        max_width = max(len(num) for num in formatted_numbers) + PADDING
+        max_widths.append(max_width)
+
+    return max_widths
+
+def display_results(numbers, powered_numbers, differences, power):
+    # Display the numbers, their powers, and all levels of differences with
+    max_widths = calculate_max_widths(numbers, powered_numbers, differences, power)
+
+    # Headers
+    headers = ["Number", "Power"] + [f"Diff_{i}" for i in range(1, len(differences) + 1)]
+    for i, header in enumerate(headers):
+        print(f"{header.ljust(max_widths[i])}", end=" ")
     print()
 
-    for i in range(n):
-        print(f"{data['Number'][i]:>7}", end="")
-        for key in list(data.keys())[1:]:
-            if i < len(data[key]):
-                print(f"{data[key][i]:>15}", end="")
+    # Rows
+    for i, num in enumerate(numbers):
+        formatted_number = str(num).ljust(max_widths[0])
+        print(f"{formatted_number}", end=" ")
+
+        for level, nums in enumerate([powered_numbers] + list(differences.values()), start=1):
+            if i < len(nums):
+                formatted_num = format_number(nums[i], level, power).rjust(max_widths[level])
+                print(f"{formatted_num}", end=" ")
             else:
-                print(" " * 15, end="")
+                print(" " * max_widths[level], end=" ")
         print()
 
+def main():
+    power = get_power_from_user()
+    numbers = list(range(NUM_LOW, NUM_HIGH))
+    powered_numbers, differences = calculate_differences(numbers, power)
+    display_results(numbers, powered_numbers, differences, power)
 
-# Call the function
-find_constant_diff(20, power)
+    # Explaining the results
+    fact = math.factorial(power)
+    print(f"\nConstant differences always appear at level equal to the exponent (here {len(differences)}).")
+    print(f"The constant difference is always the factorial of the exponent ({power}! = {fact}).")
 
-
-# Explain the results
-fact = math.factorial(power)
-print(f"\nThe number of differences is equal to the exponent ({power})")
-print(f"The final differences are equal to exponent factorial ({power}! = {fact})")
+if __name__ == "__main__":
+    main()
 
 # Copyright (c) [2023] [vccjlc]
