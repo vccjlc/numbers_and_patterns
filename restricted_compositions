@@ -16,5 +16,6 @@ def four_compositions(n):
 
     return dp[n]
 
-n = int(input())
-print(four_compositions(n))
+# Example usage
+n = 10
+print(f"Number of compositions of {n} using parts {{1, 2, 3, 4}}: {four_compositions(n)}")
