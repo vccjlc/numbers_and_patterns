@@ -2,7 +2,7 @@
 Raise consecutive natural numbers to chosen power and observe differences between results.
 What happens when you take differences between differences, and so on?
 This code is beginner-level and for demonstration purposes only. Original ranges should be preserved.
-Additional challenge for fun is to keep the line count at exactly 100.
+Additional challenge for fun is to keep the script's line count at exactly 100.
 """
 
 import math
